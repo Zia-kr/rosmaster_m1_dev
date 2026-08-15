@@ -6,7 +6,7 @@ from pynput.keyboard import Key, Listener, KeyCode
 import time
 
 
-class KeyboardPublisher(Node):
+class CommandPublisher(Node):
 
     def __init__(self):
         super().__init__('keyboard_publisher')
@@ -27,10 +27,8 @@ class KeyboardPublisher(Node):
         msg = Twist()
 
         if self.is_held_down(self.plus):
-            print('plus is pressed')
             self.speed += 0.1
         elif self.is_held_down(self.minus):
-            print('minus is pressed')
             self.speed = max(0.0, self.speed - 0.1)
 
         if self.is_held_down(Key.up):
@@ -62,9 +60,9 @@ class KeyboardPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    keyboard_publisher = KeyboardPublisher()
-    rclpy.spin(keyboard_publisher)
-    keyboard_publisher.destroy_node()
+    command_publisher = CommandPublisher()
+    rclpy.spin(command_publisher)
+    command_publisher.destroy_node()
     rclpy.shutdown()
 
 
