@@ -14,10 +14,10 @@ class CommandSubscriber(Node):
             self.listener_callback,
             10)
         self.subscription  
-        #self.bot = Rosmaster(com="/dev/ttyUSB1")
+        self.bot = Rosmaster(com="/dev/ttyUSB1")
 
     def listener_callback(self, msg):
-        #self.bot.set_car_motion(msg.linear.x, msg.linear.y, msg.angular.z)
+        self.bot.set_car_motion(msg.linear.x, msg.linear.y, msg.angular.z)
         self.get_logger().info(f'linear_x: {msg.linear.x}, linear_y: {msg.linear.y}, angular_z: {msg.angular.z}')
 
 
