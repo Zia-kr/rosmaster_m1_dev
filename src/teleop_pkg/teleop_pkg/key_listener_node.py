@@ -16,7 +16,7 @@ class CommandPublisher(Node):
         self.minus = KeyCode.from_char('m')
         self.R = KeyCode.from_char('r')
         self.L = KeyCode.from_char('l')
-        self.press_period = 0.2
+        self.press_period = 0.3
         self.last_press_time = {}
         self.listener = Listener(on_press=self.on_press)
         self.listener.start()
@@ -37,9 +37,9 @@ class CommandPublisher(Node):
             msg.linear.x = -self.speed
 
         if self.is_held_down(Key.left):
-            msg.linear.y = -self.speed
-        elif self.is_held_down(Key.right):
             msg.linear.y = self.speed
+        elif self.is_held_down(Key.right):
+            msg.linear.y = -self.speed
 
         if self.is_held_down(self.R):
             msg.angular.z = self.speed
