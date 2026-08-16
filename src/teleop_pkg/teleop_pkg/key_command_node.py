@@ -26,10 +26,11 @@ class CommandSubscriber(Node):
     def listener_callback(self, msg):
         self.last_command_time = time.monotonic()
         self.bot.set_car_motion(msg.linear.x, msg.linear.y, msg.angular.z)
-        self.get_logger().info(f'linear_x: {msg.linear.x}, linear_y: {msg.linear.y}, angular_z: {msg.angular.z}')
+        #self.get_logger().info(f'linear_x: {msg.linear.x}, linear_y: {msg.linear.y}, angular_z: {msg.angular.z}')
     
     def timer_callback(self):
         current_time = time.monotonic()
+        print("Timer callback executed")
         if current_time - self.last_command_time > 0.8:
             self.bot.set_car_motion(0.0, 0.0, 0.0)
             self.get_logger().info('No command received for 0.1 seconds, stopping the robot.')
