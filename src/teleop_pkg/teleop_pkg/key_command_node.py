@@ -18,8 +18,9 @@ class CommandSubscriber(Node):
         self.subscription  
         self.bot = Rosmaster(com="/dev/ttyUSB1")
         watchdog_timer_period = 0.1
-        self.timer = self.create_timer(watchdog_timer_period, self.timer_callback)
-        self.last_command_time = 0.0
+        self.timer = self.create_timer(watchdog_timer_period, self.watchdog_timer_callback)
+        self.last_command_time = time.monotonic()
+        self.should_stop = False
 
 
 
@@ -28,14 +29,14 @@ class CommandSubscriber(Node):
         self.bot.set_car_motion(msg.linear.x, msg.linear.y, msg.angular.z)
         self.get_logger().info(f'linear_x: {msg.linear.x}, linear_y: {msg.linear.y}, angular_z: {msg.angular.z}')
     
-    def timer_callback(self):
+    def watchdog_timer_callback(self):
         current_time = time.monotonic()
         if current_time - self.last_command_time > 0.8:
             self.bot.set_car_motion(0.0, 0.0, 0.0)
             self.get_logger().info('No command received for 0.1 seconds, stopping the robot.')
-            if current_time - self.last_command_time > 3.0:
-                self.get_logger().info('No command received for 3 seconds, stopping the robot and exiting.')
-                rclpy.shutdown()
+            if current_time - self.last_command_time > 1.5:
+                self.get_logger().info('No command received for 1.5 seconds, stopping the robot and exiting.')
+                self.should_stop = True
         else:
             self.get_logger().info('Command received, robot is moving.')
 
@@ -44,8 +45,8 @@ def main(args=None):
     rclpy.init(args=args)
 
     command_subscriber = CommandSubscriber()
-
-    rclpy.spin(command_subscriber)
+    while rclpy.ok() and not command_subscriber.should_stop:
+        rclpy.spin_once(command_subscriber)
 
     command_subscriber.destroy_node()
     rclpy.shutdown()
