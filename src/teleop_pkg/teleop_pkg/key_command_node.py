@@ -28,7 +28,7 @@ class CommandSubscriber(Node):
     def listener_callback(self, msg):
         self.last_command_time = time.monotonic()
         self.bot.set_car_motion(msg.linear.x, msg.linear.y, msg.angular.z)
-        self.bot.get_motion_data()
+        print(self.bot.get_motion_data())
     
     def watchdog_timer_callback(self):
         current_time = time.monotonic()
