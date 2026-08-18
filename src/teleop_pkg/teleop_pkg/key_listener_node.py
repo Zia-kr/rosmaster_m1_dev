@@ -24,7 +24,6 @@ class CommandPublisher(Node):
     def timer_callback(self):
         msg = Twist()
         key = self.get_key()
-
         if key == '\x1b[A':
             msg.linear.x = self.speed
             self.get_logger().info('Moving Forward')
@@ -50,18 +49,19 @@ class CommandPublisher(Node):
             msg.angular.z = -self.speed
             self.get_logger().info('Rotating Left')
 
+
         self.publisher_.publish(msg)
 
     def get_key(self):
-        # Non-blocking check: is there data waiting on stdin right now?
-        ready, _, _ = select.select([sys.stdin], [], [], 0)
-        ready = [sys.stdin]
-        if not ready:
-            return ''  
-            
-        key = sys.stdin.read(1)
-        if key == '\x1b':
-            key += sys.stdin.read(2)
+        key = ''
+        while True:
+            ready, _, _ = select.select([sys.stdin], [], [], 0)
+            if not ready:
+                break
+            new_key = sys.stdin.read(1)
+            if new_key == '\x1b':
+                new_key += sys.stdin.read(2)
+            key = new_key
         return key
 
     def restore_terminal(self):
