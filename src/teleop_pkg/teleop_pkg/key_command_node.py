@@ -38,8 +38,7 @@ class CommandSubscriber(Node):
             if current_time - self.last_command_time > 1.5:
                 self.get_logger().info('No command received for 1.5 seconds, stopping the robot and exiting.')
                 self.should_stop = True
-        else:
-            self.get_logger().info('Command received, robot is moving.')
+        
 
 
 def main(args=None):
