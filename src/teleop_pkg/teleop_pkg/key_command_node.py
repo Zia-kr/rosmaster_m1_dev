@@ -17,7 +17,6 @@ class CommandSubscriber(Node):
             10)
         self.subscription  
         self.bot = Rosmaster(com="/dev/ttyUSB1")
-        self.bot.create_receive_threading()
         watchdog_timer_period = 0.1
         self.timer = self.create_timer(watchdog_timer_period, self.watchdog_timer_callback)
         self.last_command_time = time.monotonic()
@@ -28,7 +27,7 @@ class CommandSubscriber(Node):
     def listener_callback(self, msg):
         self.last_command_time = time.monotonic()
         self.bot.set_car_motion(msg.linear.x, msg.linear.y, msg.angular.z)
-        print(self.bot.get_motion_data())
+        self.get_logger().info(f'Received command: linear.x={msg.linear.x}, linear.y={msg.linear.y}, angular.z={msg.angular.z}')
     
     def watchdog_timer_callback(self):
         current_time = time.monotonic()
