@@ -20,9 +20,10 @@ class CommandPublisher(Node):
         self.fd = sys.stdin.fileno()
         self.old_settings = termios.tcgetattr(self.fd)
         tty.setcbreak(self.fd)
-
+       
     def timer_callback(self):
         msg = Twist()
+
         key = self.get_key()
         if key == '\x1b[A':
             msg.linear.x = self.speed
@@ -31,10 +32,10 @@ class CommandPublisher(Node):
             msg.linear.x = -self.speed
             self.get_logger().info('Moving Backward')
         elif key == '\x1b[C':
-            msg.linear.y = self.speed
+            msg.linear.y = -self.speed
             self.get_logger().info('Moving Right')
         elif key == '\x1b[D':
-            msg.linear.y = -self.speed
+            msg.linear.y = self.speed
             self.get_logger().info('Moving Left')
         elif key == '+':
             self.speed += 0.1
@@ -43,13 +44,11 @@ class CommandPublisher(Node):
             self.speed = max(0, self.speed - 0.1)
             self.get_logger().info(f'Decreasing speed to {self.speed}')
         elif key == 'r':
-            msg.angular.z = self.speed
+            msg.angular.z = -self.speed
             self.get_logger().info('Rotating Right')
         elif key == 'l':
-            msg.angular.z = -self.speed
+            msg.angular.z = self.speed
             self.get_logger().info('Rotating Left')
-
-
         self.publisher_.publish(msg)
 
     def get_key(self):
